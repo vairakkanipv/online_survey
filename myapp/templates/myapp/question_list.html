@@ -1,0 +1,29 @@
+{% extends 'base.html'%}
+
+{% block header %}
+<div class="float-right">
+    <a class="btn btn-primary" href=""> add question</a>
+</div>
+
+<h1 align="center">Welcome to our Website with base</h1>
+{{a}}
+
+<table class="table table-sm">
+    <tr>
+        <th>ID</th>
+        <th>Question</th>
+        <th>Published Date</th>
+    </tr>
+    </tr>
+    {% for question in question_list %}
+    <tr>
+        <td>{{ question.id}}</td>
+        <td>
+			<a href="{% url 'myapp:question_details' question.id %}">{{question.text}}</a>
+		</td>
+        <td>{{question.datetime}}</td>
+        <td><a href="{% url 'myapp:results' question.id %}">results</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

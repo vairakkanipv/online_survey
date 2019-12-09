@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h3>Question : {{ question.id }}</h3>
+<h5>Published : {{ question.datetime }}</h5>
+{% endblock %}
+
+{% block body %}
+<p>{{question.text}}</p>
+<form name="vote_poll" id="vote_poll" action="{% url 'myapp:vote' question.id %}" method="get">
+    {% for option in options %}
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="answer" value="{{option.id}}" id="option-{{option.id}}">
+        <label class="form-check-label" for="option-{{option.id}}">
+            {{ option.text }}
+        </label>
+    </div>
+    {% endfor %}
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-md">Vote</button>
+    </div>
+<!--    <input type="hidden" name="question_id" value="{{ question.id }}">-->
+</form>
+{% endblock %}
+

@@ -1,0 +1,13 @@
+{% extends 'base.html'%}
+
+{% block header %}
+<a href="{% url 'myapp:question_list' %}">| Back to question list</a> | <a href="{% url 'myapp:question_list' %}">Answer again</a>
+<h1 align="center">Thanks for your vote</h1>
+<ul>
+    {% for option in options %}
+    <li>{{option.text}} - {{option.votes}}</li>
+    {% endfor %}
+</ul>
+<h3>The Total vote for the question is :{{ total_votes }}</h3>
+
+{% endblock %}
