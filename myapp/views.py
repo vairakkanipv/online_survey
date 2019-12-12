@@ -3,6 +3,8 @@ from .models import Question, Options
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
+from django.utils import timezone
+
 
 
 # Create your views here.
@@ -99,5 +101,20 @@ def result(request,question_id):
     return render(request, 'success.html', {'options': options, 'total_votes': total_votes})
 
 
-def question_form(request):
-    return render(request, 'add_question.html')
+class AddQuestion(generic.TemplateView):
+    template_name = "myapp/add_question.html"
+
+    def post(self,request):
+        question_text = request.POST['question_text']
+        if question_text == '':
+            return HttpResponseRedirect(reverse('myapp:question_list'))
+        question = Question(text=question_text,datetime=timezone.now())
+        question.save()
+
+        option_list = ['option1', 'option2', 'option3']
+        for option_key in option_list:
+            option = Options(question_id=question.id, text=request.POST[option_key])
+            option.save()
+            #question.options_set.add(option)
+
+        return HttpResponseRedirect(reverse('myapp:question_list'))

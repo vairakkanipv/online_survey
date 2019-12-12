@@ -3,6 +3,7 @@ from django.urls import reverse
 from .models import Question, Options
 from django.utils import timezone
 
+
 class QuestionListViewTest(TestCase):
 
     def setUp(self):
@@ -65,3 +66,24 @@ class VotingTest(TestCase):
         self.assertEquals(response.status_code, 302)
         self.assertEquals(response.url, reverse('myapp:results', args=(self.question.id, )))
 
+
+class AddQuestionTest(TestCase):
+
+    def test_get(self):
+        response = self.client.get(reverse('myapp:add_question'))
+        self.assertContains(response, 'New Question')
+        self.assertContains(response, 'Enter option2 here')
+        self.assertContains(response, 'Enter option1 here')
+
+    def test_post(self):
+        response = self.client.post(reverse('myapp:add_question'), {
+            'question_text': 'this is a question',
+            'option1': 'option1',
+            'option2': 'option2',
+            'option3': ''})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.url, reverse('myapp:question_list'))
+        question = Question.objects.filter(text='this is a question').first()
+        self.assertIsNotNone(question)
+        options = question.options_set.all()
+        self.assertEquals(len(options), 3)

@@ -1,1 +1,44 @@
 {% extends 'base.html'%}
+
+{% block header %}
+<div class="float-right">
+    <a class="btn btn-primary" href="{% url 'myapp:question_list' %}"> Goto Question list </a>
+</div>
+
+<h1 align="center">New Question</h1>
+
+<form name="add_question" id="add_question"  action="{% url 'myapp:add_question' %}" method="post">
+     {% csrf_token %}
+  <div class="form-group row">
+    <label for="question_text" class="col-sm-2 col-form-label">Question</label>
+    <div class="col-sm-10">
+         <textarea class="form-control" id="question_text" name="question_text" rows="3"></textarea>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="option1" class="col-sm-2 col-form-label">Option 1</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="option1" name="option1" placeholder="Enter option1 here">
+    </div>
+  </div>
+<div class="form-group row">
+    <label for="option2" class="col-sm-2 col-form-label">Option 2</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="option2" name="option2" placeholder="Enter option2 here">
+    </div>
+  </div>
+<div class="form-group row">
+    <label for="option3" class="col-sm-2 col-form-label">Option 3</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="option3" name="option3" placeholder="Enter option3 here">
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-sm-10">
+      <button type="submit" class="btn btn-primary">Add Question</button>
+    </div>
+  </div>
+</form>
+
+{% endblock %}
