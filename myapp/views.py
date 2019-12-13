@@ -106,7 +106,7 @@ class AddQuestion(generic.TemplateView):
 
     def post(self,request):
         question_text = request.POST['question_text']
-        if question_text == '':
+        if not(question_text and request.POST['option1'] and request.POST['option2'] and request.POST['option3']):
             return HttpResponseRedirect(reverse('myapp:question_list'))
         question = Question(text=question_text,datetime=timezone.now())
         question.save()
