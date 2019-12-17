@@ -8,7 +8,12 @@
 	</head>
 	<body>
 	<div class="container">
+		{% if request.user %}
+		<a href="{% url 'myapp:logouturl' %}">Click here to Logout - {{request.user}}</a>
+		{% else %}
 		<a href="{% url 'myapp:loginurl' %}">Click here to Login</a>
+		{% endif %}
+
 		{% block header %}
 		{% endblock %}
 

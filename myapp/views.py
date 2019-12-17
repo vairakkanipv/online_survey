@@ -1,19 +1,27 @@
 from django.shortcuts import render
 from .models import Question, Options
 from django.http import HttpResponseRedirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib.auth.views import LoginView, LogoutView
 
 
-
-# Create your views here.
-def login(request):
-    return render(request, 'login.html')
+class MyLoginView(LoginView):
+    template_name = 'myapp/login.html'
 
 
-class QuestionList(generic.ListView):
+class MyLogoutView(LogoutView):
+    next_page = "/login/"
+
+
+class QuestionList(LoginRequiredMixin, generic.ListView):
     model = Question
+
+    def get(self, request, *args, **kwargs):
+        print(request.user)
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         return Question.objects.all()
@@ -104,17 +112,16 @@ def result(request,question_id):
 class AddQuestion(generic.TemplateView):
     template_name = "myapp/add_question.html"
 
-    def post(self,request):
+    def post(self, request):
         question_text = request.POST['question_text']
-        if not(question_text and request.POST['option1'] and request.POST['option2'] and request.POST['option3']):
+        options_text = [request.POST[option_key] for option_key in ['option1', 'option2', 'option3']]
+        if not question_text.strip() or not all(text.strip() for text in options_text):
             return HttpResponseRedirect(reverse('myapp:question_list'))
-        question = Question(text=question_text,datetime=timezone.now())
+        question = Question(text=question_text, datetime=timezone.now())
         question.save()
 
-        option_list = ['option1', 'option2', 'option3']
-        for option_key in option_list:
-            option = Options(question_id=question.id, text=request.POST[option_key])
+        for option_text in options_text:
+            option = Options(question_id=question.id, text=option_text)
             option.save()
-            #question.options_set.add(option)
 
         return HttpResponseRedirect(reverse('myapp:question_list'))
