@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import Question, Options
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,6 +11,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 class MyLoginView(LoginView):
     template_name = 'myapp/login.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('myapp: question_list')
+        return super(MyLoginView, self).dispatch(request, *args, **kwargs)
+
 
 class MyLogoutView(LogoutView):
     next_page = "/login/"
@@ -20,7 +25,6 @@ class QuestionList(LoginRequiredMixin, generic.ListView):
     model = Question
 
     def get(self, request, *args, **kwargs):
-        print(request.user)
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
