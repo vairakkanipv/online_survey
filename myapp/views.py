@@ -27,7 +27,7 @@ class QuestionList(LoginRequiredMixin, generic.ListView):
         return Question.objects.all()
 
 
-class QuestionDetail(generic.DetailView):
+class QuestionDetail(LoginRequiredMixin, generic.DetailView):
     model = Question
     #template_name = 'myapp/question_detail.html'
 
@@ -109,7 +109,7 @@ def result(request,question_id):
     return render(request, 'success.html', {'options': options, 'total_votes': total_votes})
 
 
-class AddQuestion(generic.TemplateView):
+class AddQuestion(LoginRequiredMixin, generic.TemplateView):
     template_name = "myapp/add_question.html"
 
     def post(self, request):
