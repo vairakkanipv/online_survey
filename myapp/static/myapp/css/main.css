@@ -96,3 +96,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
+    .register{
+        width : 1200px;
+    }

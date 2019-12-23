@@ -11,6 +11,7 @@
     <tr>
         <th>ID</th>
         <th>Question</th>
+        <th>Author</th>
         <th>Published Date</th>
     </tr>
     </tr>
@@ -20,6 +21,7 @@
         <td>
 			<a href="{% url 'myapp:question_details' question.id %}">{{question.text}}</a>
 		</td>
+        <td>{{question.author}}</td>
         <td>{{question.datetime}}</td>
         <td><a href="{% url 'myapp:results' question.id %}">results</a></td>
     </tr>

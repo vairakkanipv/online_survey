@@ -125,7 +125,7 @@ class AddQuestion(LoginRequiredMixin, generic.TemplateView):
         options_text = [request.POST[option_key] for option_key in ['option1', 'option2', 'option3']]
         if not question_text.strip() or not all(text.strip() for text in options_text):
             return HttpResponseRedirect(reverse('myapp:question_list'))
-        question = Question(text=question_text, datetime=timezone.now())
+        question = Question(text=question_text, datetime=timezone.now(), author_id=request.user.id)
         question.save()
 
         for option_text in options_text:

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block header %}
-<h1>User Registeration</h1>
+
 {% endblock %}
 
 {% block body %}
@@ -19,6 +19,7 @@
 {% endif %}
 
 <div class="register">
+    <h1>User Registeration</h1>
     <form method="POST">
         {% csrf_token %}
         {{form.as_p}}
