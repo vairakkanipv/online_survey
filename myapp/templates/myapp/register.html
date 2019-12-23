@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'myapp/css/main.css' %}">
+{% endblock %}
+
+{% block header %}
+<h1>User Registeration</h1>
+{% endblock %}
+
+{% block body %}
+
+
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">
+    <p>Form has some errors. Please try again.</p>
+</div>
+{% endif %}
+
+<div class="register">
+    <form method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button style="background-color:#F4EB16; color:blue" class="btn btn-outline-info" type="submit">Sign Up</button>
+
+    </form>
+
+</div>
+If you already have an account <a href="/login" target="blank"><strong>login</strong></a> instead.
+
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}

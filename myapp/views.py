@@ -1,16 +1,20 @@
 from django.shortcuts import render,redirect
 from .models import Question, Options
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import UserCreationForm
 
 
 class MyLoginView(LoginView):
     template_name = 'myapp/login.html'
 
+    # def get(self, request):
+    #     if request.user.is_authenticated:
+    #         return redirect('myapp: question_list')
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('myapp: question_list')
@@ -129,3 +133,38 @@ class AddQuestion(LoginRequiredMixin, generic.TemplateView):
             option.save()
 
         return HttpResponseRedirect(reverse('myapp:question_list'))
+
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # username = user.username # form.cleaned_data.get('username')
+            return HttpResponseRedirect(reverse('myapp:question_list'))
+        else:
+            for msg in form.error_messages:
+                print(form.error_messages[msg])
+            return render(request=request, template_name="myapp/register.html", context={"form": form})
+
+    form = UserCreationForm()
+    return render(request=request,
+                  template_name="myapp/register.html",
+                  context={"form": form})
+
+
+class RegisterView(generic.TemplateView):
+    template_name = "myapp/register.html"
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return HttpResponseRedirect(reverse('myapp:question_list'))
+        else:
+            return render(request=request, template_name=self.template_name, context={"form": form})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = UserCreationForm()
+        return context
