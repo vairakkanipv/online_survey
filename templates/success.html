@@ -5,7 +5,7 @@
 <h1 align="center">Thanks for your vote</h1>
 <ul>
     {% for option in options %}
-    <li>{{option.text}} - {{option.votes}}</li>
+    <li>{{option.text}} - {{option.votes.count}}</li>
     {% endfor %}
 </ul>
 <h3>The Total vote for the question is :{{ total_votes }}</h3>

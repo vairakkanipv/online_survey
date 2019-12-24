@@ -67,6 +67,7 @@ class VotingTest(TestCase):
         self.user = User(username='tester')
         self.user.set_password('1234')
         self.user.save()
+        self.client.login(username='tester', password='1234')
         self.question = Question(text='this is test of vote answer test question', datetime=timezone.now(),author_id=self.user.id)
         self.question.save()
         option_text_list = ['answer1', 'answer2', 'answer3']
@@ -79,7 +80,7 @@ class VotingTest(TestCase):
         response = self.client.get(reverse('myapp:results', args=(self.question.id, )))
         option_list = self.question.options_set.all()
         for option in option_list:
-            search_word = f"{option.text} - {option.votes}"
+            search_word = f"{option.text} - {option.votes.count()}"
             self.assertContains(response, search_word)
 
     def test_vote(self):
