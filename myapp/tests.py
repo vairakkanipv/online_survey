@@ -84,7 +84,7 @@ class VotingTest(TestCase):
             self.assertContains(response, search_word)
 
     def test_vote(self):
-        response = self.client.get(reverse('myapp:vote', args=(self.question.id,)), {'answer': self.answer})
+        response = self.client.post(reverse('myapp:vote'), {'answer': str(self.answer), 'question_id': str(self.question.id)})
         self.assertEquals(response.status_code, 302)
         self.assertEquals(response.url, reverse('myapp:results', args=(self.question.id, )))
 

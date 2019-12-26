@@ -9,8 +9,8 @@ urlpatterns = [
     path('', views.QuestionList.as_view(), name='question_list'),
     #path('question_detail/<int:question_id>', views.question_detail, name="question_details"),
     path('question_detail/<int:pk>', views.QuestionDetail.as_view(), name="question_details"),
-    path('vote/<int:question_id>', views.vote, name="vote"),
-    path('results/<int:question_id>',views.result, name='results'),
+    path('vote', views.VoteView.as_view(), name="vote"),
+    path('results/<int:question_id>',views.ResultView.as_view(), name='results'),
     path('add_question',views.AddQuestion.as_view(), name='add_question'),
     path("register/", views.RegisterView.as_view(), name="register"),
 

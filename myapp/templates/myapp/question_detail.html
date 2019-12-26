@@ -7,7 +7,9 @@
 
 {% block body %}
 <p>{{question.text}}</p>
-<form name="vote_poll" id="vote_poll" action="{% url 'myapp:vote' question.id %}" method="get">
+<form name="vote_poll" id="vote_poll" action="{% url 'myapp:vote' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="question_id" value="{{question.id}}">
     {% for option in options %}
     <div class="form-check">
         <input class="form-check-input" type="radio" name="answer" value="{{option.id}}" id="option-{{option.id}}">

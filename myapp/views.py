@@ -37,6 +37,15 @@ class QuestionDetail(LoginRequiredMixin, generic.DetailView):
     model = Question
     #template_name = 'myapp/question_detail.html'
 
+    def get(self, request, pk):
+        question = Question.objects.get(pk=pk)
+        options = question.options_set.all()
+        for option in options:
+            if request.user in option.votes.all():
+                return HttpResponseRedirect(reverse('myapp:results', args=(pk,)))
+
+        return super().get(request, pk)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question = context['question']
@@ -58,56 +67,59 @@ class QuestionDetail(LoginRequiredMixin, generic.DetailView):
 #     else:
 #         return render(request, 'question_detail.html', {'question': question, 'options': options})
 
-@login_required
-def vote(request, question_id):
-    '''
-    - fetch question id
-    - fetch option id
-    - check question id is valid
-    - check option id is one among the questions's option
-    :param request:
-    :param question_id:
-    :return:
-    '''
-    current_question_id = question_id
-    try:
-        current_answer_id = int(request.GET['answer'])
-    except (KeyError, ValueError) as ex:
-        return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
-    try:
-        question = Question.objects.get(id=current_question_id)
-    except Question.DoesNotExist as ex:
-        print(ex)
-        return HttpResponseRedirect(reverse('myapp:question_list'))
+class VoteView(LoginRequiredMixin, generic.View):
 
-    try:
-        selected_option = Options.objects.get(id=current_answer_id)
-    except Options.DoesNotExist as ex:
-        print(ex)
-        return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
+    def post(self, request):
+        '''
+        - fetch question id
+        - fetch option id
+        - check question id is valid
+        - check option id is one among the questions's option
+        :param request:
+        :param question_id:
+        :return:
+        '''
+        current_question_id = int(request.POST['question_id'])
+        try:
+            current_answer_id = int(request.POST['answer'])
+        except (KeyError, ValueError) as ex:
+            return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
+        try:
+            question = Question.objects.get(id=current_question_id)
+        except Question.DoesNotExist as ex:
+            print(ex)
+            return HttpResponseRedirect(reverse('myapp:question_list'))
 
-    found = False
-    options = question.options_set.all()
-    for option in options:
-        if option.id == selected_option.id:
-            found = True
-            break
+        try:
+            selected_option = Options.objects.get(id=current_answer_id)
+        except Options.DoesNotExist as ex:
+            print(ex)
+            return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
 
-    if found == True:
-        selected_option.votes.add(request.user)
-        selected_option.save()
-        return HttpResponseRedirect(reverse('myapp:results', args=(current_question_id,)))
-    else:
-        return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
+        found = False
+        options = question.options_set.all()
+        for option in options:
+            if option.id == selected_option.id:
+                found = True
+                break
 
-@login_required
-def result(request, question_id):
-    question = Question.objects.get(id=question_id)
-    options = question.options_set.all()
-    total_votes = 0
-    for option in options:
-        total_votes += option.votes.count()
-    return render(request, 'success.html', {'options': options, 'total_votes': total_votes})
+        if found == True:
+            selected_option.votes.add(request.user)
+            selected_option.save()
+            return HttpResponseRedirect(reverse('myapp:results', args=(current_question_id,)))
+        else:
+            return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
+
+
+class ResultView(LoginRequiredMixin, generic.View):
+
+    def get(self, request, question_id):
+        question = Question.objects.get(id=question_id)
+        options = question.options_set.all()
+        total_votes = 0
+        for option in options:
+            total_votes += option.votes.count()
+        return render(request, 'success.html', {'options': options, 'total_votes': total_votes})
 
 
 class AddQuestion(LoginRequiredMixin, generic.TemplateView):
