@@ -93,7 +93,7 @@ class VoteView(LoginRequiredMixin, generic.View):
         try:
             selected_option = Options.objects.get(id=current_answer_id)
         except Options.DoesNotExist as ex:
-            print(ex)
+            # print(ex)
             return HttpResponseRedirect(reverse('myapp:question_details', args=(current_question_id,)))
 
         found = False
@@ -104,6 +104,10 @@ class VoteView(LoginRequiredMixin, generic.View):
                 break
 
         if found == True:
+            for option in options:
+                if request.user in option.votes.all():
+                    return HttpResponseRedirect(reverse('myapp:results', args=(current_question_id,)))
+            # if the user not vote the question then add vote
             selected_option.votes.add(request.user)
             selected_option.save()
             return HttpResponseRedirect(reverse('myapp:results', args=(current_question_id,)))
