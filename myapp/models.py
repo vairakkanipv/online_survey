@@ -15,6 +15,7 @@ class Question(models.Model):
 class Options(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.CharField(max_length=150)
+    # votes is a list of Users, who voted for this option
     votes = models.ManyToManyField(User)
 
     def __str__(self):

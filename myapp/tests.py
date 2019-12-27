@@ -19,7 +19,6 @@ class QuestionListViewTest(TestCase):
             question.save()
 
     def test_question_list(self):
-
         response = self.client.get(reverse('myapp:question_list'))
         question_list = Question.objects.all()
         for question in question_list:
@@ -87,6 +86,27 @@ class VotingTest(TestCase):
         response = self.client.post(reverse('myapp:vote'), {'answer': str(self.answer), 'question_id': str(self.question.id)})
         self.assertEquals(response.status_code, 302)
         self.assertEquals(response.url, reverse('myapp:results', args=(self.question.id, )))
+
+        options = self.question.options_set.all()
+        other_option = None
+        for option in options:
+            if option.id == self.answer:
+                self.assertTrue(self.user in option.votes.all())
+            else:
+                self.assertFalse(self.user in option.votes.all())
+                other_option = option.id
+
+        response = self.client.post(reverse('myapp:vote'),
+                                    {'answer': str(other_option), 'question_id': str(self.question.id)})
+        self.assertEquals(response.status_code, 302)
+        self.assertEquals(response.url, reverse('myapp:results', args=(self.question.id, )))
+
+        for option in options:
+            if option.id == self.answer:
+                self.assertTrue(self.user in option.votes.all())
+            else:
+                self.assertFalse(self.user in option.votes.all())
+
 
 
 class AddQuestionTest(TestCase):
