@@ -49,7 +49,7 @@ class QuestionDetail(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         question = context['question']
-        options = question.options_set.all()
+        options = question.options_set.order_by('text').all()
         context['options'] = options
         return context
 
