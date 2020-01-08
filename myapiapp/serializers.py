@@ -36,21 +36,21 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class VoteSerializer(serializers.Serializer):
-    answer = serializers.IntegerField()
-    question_id = serializers.IntegerField()
+    answer = serializers.IntegerField(required=True)
+    question_id = serializers.IntegerField(required=True)
 
     def validate_question_id(self, value):
         try:
             question = Question.objects.get(id=value)
         except Question.DoesNotExist as ex:
-            return serializers.ValidationError("Should be a valid question id")
+            raise serializers.ValidationError("Should be a valid question id")
         return value
 
     def validate_answer(self, value):
         try:
             selected_option = Options.objects.get(id=value)
         except Options.DoesNotExist as ex:
-            return serializers.ValidationError("Should be a valid option id")
+            raise serializers.ValidationError("Should be a valid option id")
         return value
 
     def validate(self, data):
@@ -62,7 +62,7 @@ class VoteSerializer(serializers.Serializer):
             question = Question.objects.get(id=question_id)
             selected_option = Options.objects.get(id=answer)
         except Exception as ex:
-            logging.exception(ex)
+            # logging.exception(ex)
             raise serializers.ValidationError(str(ex))
         found = False
         options = question.options_set.all()

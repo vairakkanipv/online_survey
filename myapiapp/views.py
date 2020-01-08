@@ -5,6 +5,7 @@ from .serializers import UserSerializer, OptionSerializer, QuestionSerializer, Q
 from myapp.models import Options, Question
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework import permissions
 
 
 class AllUserViewSet(viewsets.ModelViewSet):
@@ -23,6 +24,7 @@ class OptionsViewSet(viewsets.ModelViewSet):
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Question.objects.all()
 
     def get_serializer_class(self):
